@@ -189,8 +189,8 @@ class Site(object):
                             'db_keywords': paste.db_keywords},
                          'tags': tags, 'title': paste.title, 'length': paste.length, 'author': paste.author}
 
-                    if not r.db('mimir').table('url').filter({'external_id': paste.id}).count().run(conn):
+                    if not r.db('khadgar').table('url').filter({'external_id': paste.id}).count().run(conn):
 
-                        r.db('mimir').table('url').insert(d, conflict='update').run(conn)
+                        r.db('khadgar').table('url').insert(d, conflict='update').run(conn)
 
             time.sleep(0.01)
