@@ -47,15 +47,15 @@ def get_tags(paste):
     '''
     tags = []
     if paste.match():
-        if paste.type == 'google_api':
+        if 'google_api' in paste.types:
             tags.append('Found possible Google API key(s)')
-        elif paste.type in ['cisco', 'juniper']:
-            tags.append('Possible ' + paste.type + ' configuration')
-        elif paste.type == 'ssh_private':
+        elif 'cisco' in paste.types or 'juniper' in paste.types:
+            tags.append('Possible router configuration')
+        elif 'ssh_private' in paste.types:
             tags.append('Possible SSH private key')
-        elif paste.type == 'honeypot':
+        elif 'honeypot' in paste.types:
             tags.append('Dionaea Honeypot Log')
-        elif paste.type == 'pgp_private':
+        elif 'pgp_private' in paste.types:
             tags.append('Found possible PGP Private Key')
     return tags
 

@@ -43,7 +43,7 @@ class Paste(object):
                 self.num_emails
                 self.num_hashes
                 self.db_keywords
-                self.type
+                self.types
 
         '''
         # Get the amount of emails
@@ -52,7 +52,7 @@ class Paste(object):
         for t in settings.TERMS:
             if t.lower() in self.text.lower():
                 self.terms.append(t)
-                self.type.append('term-match')
+                self.types.append('term-match')
                 print(self.__dict__)
 
         self.emails = list(set(regexes['email'].findall(self.text)))
@@ -77,23 +77,23 @@ class Paste(object):
                         1 / float(len(regexes['db_keywords']))), 2)
         if (self.num_emails >= settings.EMAIL_THRESHOLD) or (self.num_hashes >= settings.HASH_THRESHOLD) or (
                 self.db_keywords >= settings.DB_KEYWORDS_THRESHOLD):
-            self.type.append('db_dump')
+            self.types.append('db_dump')
         if regexes['cisco_hash'].search(self.text) or regexes['cisco_pass'].search(self.text):
-            self.type.append('cisco')
+            self.types.append('cisco')
         if regexes['honeypot'].search(self.text):
-            self.type.append('honeypot')
+            self.types.append('honeypot')
         if regexes['google_api'].search(self.text):
-            self.type.append('google_api')
+            self.types.append('google_api')
         if regexes['pgp_private'].search(self.text):
-            self.type.append('pgp_private')
+            self.types.append('pgp_private')
         if regexes['ssh_private'].search(self.text):
-            self.type.append('ssh_private')
-        # if regexes['juniper'].search(self.text): self.type = 'Juniper'
+            self.types.append('ssh_private')
+        # if regexes['juniper'].search(self.text): self.types = 'Juniper'
         for regex in regexes['banlist']:
             if regex.search(self.text):
-                self.type = []
+                self.types = []
                 break
-        return self.type
+        return self.types
 
 
 class Site(object):
