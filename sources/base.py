@@ -181,12 +181,12 @@ class Site(object):
 
                 tags = helper.get_tags(paste)
 
-                if paste.type:
+                if paste.types:
 
                     print('Inserting paste ' + paste.id)
 
                     d = {'external_id': paste.id, 'agent': 'paste-monitor', 'source': self.__class__.__name__,
-                         'text': paste.text if not paste.terms else '@channel {}'.format(paste.text), 'type': 'paste', 'sub_type': paste.type,
+                         'text': paste.text if not paste.terms else '@channel {}'.format(paste.text), 'type': 'paste', 'sub_type': paste.types,
                          'date': paste.date, 'url': paste.url, 'summary': '', 'terms': paste.terms,
                          'metadata': {
                             'num_emails': paste.num_emails,
