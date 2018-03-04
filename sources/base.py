@@ -22,10 +22,11 @@ class Paste(object):
         self.num_emails = 0
         self.num_hashes = 0
         self.text = None
-        self.type = None
+        self.types = []
         self.sites = None
         self.db_keywords = 0.0
         self.terms = []
+        self.domains = []
 
         self.title = ''
         self.length = ''
@@ -51,10 +52,14 @@ class Paste(object):
         for t in settings.TERMS:
             if t.lower() in self.text.lower():
                 self.terms.append(t)
-                self.type = 'term-match'
+                self.type.append('term-match')
                 print(self.__dict__)
 
         self.emails = list(set(regexes['email'].findall(self.text)))
+        for email in self.emails:
+            domain = email.split('@')[1]
+            if domain not in self.domains:
+                self.domains.append(domain)
         self.hashes = regexes['hash32'].findall(self.text)
         self.num_emails = len(self.emails)
         self.num_hashes = len(self.hashes)
@@ -72,21 +77,21 @@ class Paste(object):
                         1 / float(len(regexes['db_keywords']))), 2)
         if (self.num_emails >= settings.EMAIL_THRESHOLD) or (self.num_hashes >= settings.HASH_THRESHOLD) or (
                 self.db_keywords >= settings.DB_KEYWORDS_THRESHOLD):
-            self.type = 'db_dump'
+            self.type.append('db_dump')
         if regexes['cisco_hash'].search(self.text) or regexes['cisco_pass'].search(self.text):
-            self.type = 'cisco'
+            self.type.append('cisco')
         if regexes['honeypot'].search(self.text):
-            self.type = 'honeypot'
+            self.type.append('honeypot')
         if regexes['google_api'].search(self.text):
-            self.type = 'google_api'
+            self.type.append('google_api')
         if regexes['pgp_private'].search(self.text):
-            self.type = 'pgp_private'
+            self.type.append('pgp_private')
         if regexes['ssh_private'].search(self.text):
-            self.type = 'ssh_private'
+            self.type.append('ssh_private')
         # if regexes['juniper'].search(self.text): self.type = 'Juniper'
         for regex in regexes['banlist']:
             if regex.search(self.text):
-                self.type = None
+                self.type = []
                 break
         return self.type
 
@@ -181,10 +186,11 @@ class Site(object):
                     print('Inserting paste ' + paste.id)
 
                     d = {'external_id': paste.id, 'agent': 'paste-monitor', 'source': self.__class__.__name__,
-                         'text': paste.text, 'type': 'paste', 'sub_type': paste.type,
+                         'text': paste.text if not paste.terms else '@channel {}'.format(paste.text), 'type': 'paste', 'sub_type': paste.type,
                          'date': paste.date, 'url': paste.url, 'summary': '', 'terms': paste.terms,
                          'metadata': {
                             'num_emails': paste.num_emails,
+                            'domains': paste.domains,
                             'num_hashes': paste.num_hashes,
                             'db_keywords': paste.db_keywords},
                          'tags': tags, 'title': paste.title, 'length': paste.length, 'author': paste.author}
