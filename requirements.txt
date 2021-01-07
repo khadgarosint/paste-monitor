@@ -3,7 +3,7 @@ bs4==0.0.1
 certifi==2018.1.18
 chardet==3.0.4
 idna==2.6
-lxml==4.1.1
+lxml==4.6.2
 python-dateutil==2.6.1
 requests==2.18.4
 rethinkdb==2.3.0.post6
